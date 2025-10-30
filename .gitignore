@@ -1,0 +1,21 @@
+# generated
+dist/
+dist-dev/
+bun.lockb
+node_modules/
+.astro/
+.output/
+.dev/
+
+# environment variables
+**/*.env*
+.env
+.env.*
+!.env.example
+
+# OS-specific files
+**/*.DS_Store
+.AppleDouble
+.LSOverride
+.temp
+.tmp
