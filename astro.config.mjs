@@ -11,14 +11,16 @@ export default defineConfig({
     plugins: [tailwindcss()],
   },
   experimental: {
-    fonts: [{
-      provider: fontProviders.google(),
-      name: 'Inter',
-      cssVariable: '--font-sans',
-      weights: ['100 900'],
-      styles: ['normal', 'italic'],
-      subsets: ['latin'],
-      fallbacks: ['system-ui', '-apple-system', 'sans-serif'],
-    }],
+    fonts: [
+      {
+        provider: fontProviders.google(),
+        name: 'Inter',
+        cssVariable: '--font-sans',
+        weights: ['100 900'],
+        styles: ['normal', 'italic'],
+        subsets: ['latin'],
+        fallbacks: ['system-ui', '-apple-system', 'sans-serif'],
+      },
+    ],
   },
 })

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Fruitbench is an over-engineered fruit ranking benchmark application where users can rate fruits based on 4 scoring criteria (Flavor, Nourishment, Reliability, Practicality) and compare results with friends. The application is built as a static site using Astro 5 with Islands Architecture.
+Fruitbench is an over-engineered fruit ranking benchmark application where users can rate fruits based on 4 scoring criteria (Flavor, Nourishment, Reliability, Practicality) and compare results with friends. The application uses a weighted scoring system that emphasizes flavor (4x weight) to ensure taste is the primary criterion. The application is built as a static site using Astro 5 with Islands Architecture.
 
 ## Guidelnes for Claude
 
@@ -53,6 +53,26 @@ The basic flow of the application from the user's perspective should loosely be 
 2. The user uses the ranking interface on each fruit rank them on 4 criteria (Flavor, Nourishment, Reliability, Practicality) using sliders or some similar UI elements. The interface should allow for quick ranking between fruits easy adjustment of scores including being able to remove or reset scores quickly.
 3. As the user ranks fruits, the results table updates in real-time to reflect the current rankings, with sortable columns and a tier system (S, A, B, C, F) visually indicated, with the user able to click column headers to sort by different criteria.
 4. Once the user is satisfied with their rankings, they can export/share their results to platforms like Discord via a **unique** link to said results or image. The user's rankings should be saved in local storage so they can revisit or adjust them later without losing progress.
+
+## Scoring System
+
+**Weighted Formula:**
+
+- Total Score = (Flavor × 4) + Nourishment + Reliability + Practicality
+- Maximum possible score: 70 points
+- Flavor weight: 40 points (57% of total)
+- Other criteria: 10 points each (14% each)
+
+**Rationale:**
+Flavor is weighted 4x because an inedible fruit (0/10 flavor) should never rank highly, regardless of other qualities. For example, a fruit with 0/10 flavor and perfect 10/10s in all other criteria would score 30/70 (43%), earning an F tier.
+
+**Tier System:**
+
+- S: 63-70 (90%+) - Elite tier
+- A: 56-62 (80-89%) - Excellent
+- B: 49-55 (70-79%) - Good
+- C: 35-48 (50-69%) - Average
+- F: 0-34 (<50%) - Below average
 
 ## Architecture
 
@@ -135,6 +155,9 @@ The application includes:
    - S-tier: Warning color (yellow/gold), 90%+ scores
    - Grouped by tier for easy visual scanning
    - Legend showing tier percentages
+   - Unified table design across desktop and mobile for consistency
+   - Compact, responsive table layout with horizontal scroll on small screens
+   - Mobile modal overlay for viewing results without leaving ranking interface
 
 5. **Sharing System**:
    - Generate shareable URL with Base64-encoded rankings in query params
@@ -154,10 +177,12 @@ The application includes:
    - No FART (Flash of inAccurate coloR Theme) using inline script
 
 8. **Mobile-First Design**:
-   - Fully responsive layout with mobile drawer for fruit selection
-   - Desktop: 3-column layout (selector | ranking | results)
-   - Mobile: Stacked layout with hamburger menu for selector
+   - Fully responsive layout
+   - Desktop: 2-column layout (45% ranking panel | 55% results table)
+   - Mobile: Single-column ranking interface with floating action button for results
+   - Mobile results modal displays same compact table as desktop for UI/UX parity
    - Touch-friendly buttons and sliders
+   - Tag selector sticky at top of ranking panel
 
 ## Style Guidelines
 

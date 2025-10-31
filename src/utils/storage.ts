@@ -1,4 +1,10 @@
-import type { AppState, FruitRating, SortConfig } from '../types'
+import type {
+  AppState,
+  FruitRating,
+  FruitTag,
+  SortColumn,
+  SortConfig,
+} from '../types.ts'
 
 const STORAGE_KEY = 'fruitbench-state'
 const STORAGE_VERSION = 1
@@ -39,8 +45,7 @@ export function saveState(state: Partial<AppState>): void {
     }
 
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
-  }
-  catch (error) {
+  } catch (error) {
     console.error('Failed to save state to localStorage:', error)
   }
 }
@@ -51,10 +56,9 @@ export function saveState(state: Partial<AppState>): void {
 export function loadState(): AppState {
   try {
     const stored = localStorage.getItem(STORAGE_KEY)
-    if (!stored)
-      return DEFAULT_STATE
+    if (stored === null || stored === '') return DEFAULT_STATE
 
-    const data: StorageData = JSON.parse(stored)
+    const data: StorageData = JSON.parse(stored) as StorageData
 
     // Check version and migrate if needed
     if (data.version !== STORAGE_VERSION) {
@@ -64,8 +68,7 @@ export function loadState(): AppState {
 
     // Validate and return state
     return validateState(data.state)
-  }
-  catch (error) {
+  } catch (error) {
     console.error('Failed to load state from localStorage:', error)
     return DEFAULT_STATE
   }
@@ -74,7 +77,7 @@ export function loadState(): AppState {
 /**
  * Validate the state structure to ensure it matches expected types
  */
-function validateState(state: any): AppState {
+function validateState(state: unknown): AppState {
   const validated: AppState = {
     ratings: {},
     selectedFruitIds: [],
@@ -82,25 +85,41 @@ function validateState(state: any): AppState {
     filterConfig: { ...DEFAULT_STATE.filterConfig },
   }
 
+  if (typeof state !== 'object' || state === null) {
+    return validated
+  }
+
+  const stateObj = state as Record<string, unknown>
+
   // Validate ratings
-  if (state.ratings && typeof state.ratings === 'object') {
-    Object.entries(state.ratings).forEach(([fruitId, rating]) => {
+  if (
+    typeof stateObj.ratings === 'object' &&
+    stateObj.ratings !== null &&
+    !Array.isArray(stateObj.ratings)
+  ) {
+    const ratings = stateObj.ratings as Record<string, unknown>
+    Object.entries(ratings).forEach(([fruitId, rating]) => {
       if (isValidRating(rating)) {
-        validated.ratings[fruitId] = rating as FruitRating
+        validated.ratings[fruitId] = rating
       }
     })
   }
 
   // Validate selected fruit IDs
-  if (Array.isArray(state.selectedFruitIds)) {
-    validated.selectedFruitIds = state.selectedFruitIds.filter(
-      (id: any) => typeof id === 'string',
-    )
+  if (Array.isArray(stateObj.selectedFruitIds)) {
+    validated.selectedFruitIds = (
+      stateObj.selectedFruitIds as unknown[]
+    ).filter((id): id is string => typeof id === 'string')
   }
 
   // Validate sort config
-  if (state.sortConfig && typeof state.sortConfig === 'object') {
-    const { column, direction } = state.sortConfig
+  if (
+    typeof stateObj.sortConfig === 'object' &&
+    stateObj.sortConfig !== null &&
+    !Array.isArray(stateObj.sortConfig)
+  ) {
+    const sortConfig = stateObj.sortConfig as Record<string, unknown>
+    const { column, direction } = sortConfig
     if (isValidSortColumn(column)) {
       validated.sortConfig.column = column
     }
@@ -110,12 +129,17 @@ function validateState(state: any): AppState {
   }
 
   // Validate filter config
-  if (state.filterConfig && typeof state.filterConfig === 'object') {
-    if (Array.isArray(state.filterConfig.tags)) {
-      validated.filterConfig.tags = state.filterConfig.tags
+  if (
+    typeof stateObj.filterConfig === 'object' &&
+    stateObj.filterConfig !== null &&
+    !Array.isArray(stateObj.filterConfig)
+  ) {
+    const filterConfig = stateObj.filterConfig as Record<string, unknown>
+    if (Array.isArray(filterConfig.tags)) {
+      validated.filterConfig.tags = filterConfig.tags as FruitTag[]
     }
-    if (typeof state.filterConfig.searchQuery === 'string') {
-      validated.filterConfig.searchQuery = state.filterConfig.searchQuery
+    if (typeof filterConfig.searchQuery === 'string') {
+      validated.filterConfig.searchQuery = filterConfig.searchQuery
     }
   }
 
@@ -125,39 +149,54 @@ function validateState(state: any): AppState {
 /**
  * Check if a rating object is valid
  */
-function isValidRating(rating: any): boolean {
+function isValidRating(rating: unknown): rating is FruitRating {
+  if (typeof rating !== 'object' || rating === null) {
+    return false
+  }
+
+  const r = rating as Record<string, unknown>
+
   return (
-    rating
-    && typeof rating === 'object'
-    && typeof rating.fruitId === 'string'
-    && typeof rating.flavor === 'number'
-    && typeof rating.nourishment === 'number'
-    && typeof rating.reliability === 'number'
-    && typeof rating.practicality === 'number'
-    && rating.flavor >= 0
-    && rating.flavor <= 10
-    && rating.nourishment >= 0
-    && rating.nourishment <= 10
-    && rating.reliability >= 0
-    && rating.reliability <= 10
-    && rating.practicality >= 0
-    && rating.practicality <= 10
+    typeof r.fruitId === 'string' &&
+    typeof r.flavor === 'number' &&
+    typeof r.nourishment === 'number' &&
+    typeof r.reliability === 'number' &&
+    typeof r.practicality === 'number' &&
+    r.flavor >= 0 &&
+    r.flavor <= 10 &&
+    r.nourishment >= 0 &&
+    r.nourishment <= 10 &&
+    r.reliability >= 0 &&
+    r.reliability <= 10 &&
+    r.practicality >= 0 &&
+    r.practicality <= 10
   )
 }
 
 /**
  * Check if a sort column is valid
  */
-function isValidSortColumn(column: any): boolean {
-  return ['name', 'flavor', 'nourishment', 'reliability', 'practicality', 'total'].includes(
-    column,
+function isValidSortColumn(column: unknown): column is SortColumn {
+  return (
+    typeof column === 'string' &&
+    [
+      'name',
+      'flavor',
+      'nourishment',
+      'reliability',
+      'practicality',
+      'total',
+    ].includes(column)
   )
 }
 
 /**
  * Save a single fruit rating
  */
-export function saveRating(fruitId: string, rating: Omit<FruitRating, 'fruitId'>): void {
+export function saveRating(
+  fruitId: string,
+  rating: Omit<FruitRating, 'fruitId'>,
+): void {
   const state = loadState()
   state.ratings[fruitId] = { fruitId, ...rating }
   saveState(state)
@@ -197,7 +236,7 @@ export function addSelectedFruit(fruitId: string): void {
  */
 export function removeSelectedFruit(fruitId: string): void {
   const state = loadState()
-  state.selectedFruitIds = state.selectedFruitIds.filter(id => id !== fruitId)
+  state.selectedFruitIds = state.selectedFruitIds.filter((id) => id !== fruitId)
   // Also remove the rating if it exists
   delete state.ratings[fruitId]
   saveState(state)
@@ -216,8 +255,7 @@ export function saveSortConfig(sortConfig: SortConfig): void {
 export function clearState(): void {
   try {
     localStorage.removeItem(STORAGE_KEY)
-  }
-  catch (error) {
+  } catch (error) {
     console.error('Failed to clear localStorage:', error)
   }
 }
@@ -235,12 +273,11 @@ export function exportState(): string {
  */
 export function importState(json: string): boolean {
   try {
-    const state = JSON.parse(json)
+    const state = JSON.parse(json) as unknown
     const validated = validateState(state)
     saveState(validated)
     return true
-  }
-  catch (error) {
+  } catch (error) {
     console.error('Failed to import state:', error)
     return false
   }

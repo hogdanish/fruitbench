@@ -1,5 +1,4 @@
 {
-
   //* general
 
   "astro.content-intellisense": true,
@@ -10,7 +9,8 @@
   //* antfu/eslint-config
 
   // Disable the default formatter to use eslint instead
-  "prettier.enable": false,
+  "eslint.useFlatConfig": true,
+  "prettier.enable": true,
   "editor.formatOnSave": false,
 
   // Auto fix

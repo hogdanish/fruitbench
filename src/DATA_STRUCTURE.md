@@ -112,7 +112,7 @@ filterBySearch(FRUITS, 'apple')
 // Combined filtering
 filterFruits(FRUITS, {
   tags: ['tropical'],
-  searchQuery: 'mango'
+  searchQuery: 'mango',
 })
 ```
 
@@ -125,7 +125,7 @@ const rating: FruitRating = {
   flavor: 9,
   nourishment: 8,
   reliability: 10,
-  practicality: 10
+  practicality: 10,
 }
 
 // Calculate total and tier
@@ -163,7 +163,7 @@ saveRating('banana', {
   flavor: 9,
   nourishment: 8,
   reliability: 10,
-  practicality: 10
+  practicality: 10,
 })
 
 // Add fruit to benchmark
@@ -234,7 +234,7 @@ saveRating('banana', {
   flavor: 9,
   nourishment: 8,
   reliability: 10,
-  practicality: 10
+  practicality: 10,
 })
 
 // Check if a fruit is fully rated
@@ -258,11 +258,11 @@ const grouped = groupByTier(sorted)
 // Display with tier separators
 if (grouped.S.length > 0) {
   console.log('=== S TIER ===')
-  grouped.S.forEach(fruit => displayFruit(fruit))
+  grouped.S.forEach((fruit) => displayFruit(fruit))
 }
 if (grouped.A.length > 0) {
   console.log('=== A TIER ===')
-  grouped.A.forEach(fruit => displayFruit(fruit))
+  grouped.A.forEach((fruit) => displayFruit(fruit))
 }
 // ... etc
 ```

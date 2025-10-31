@@ -1,8 +1,10 @@
 ---
 import FruitBench from '../components/FruitBench'
+import Welcome from '../components/Welcome.astro'
 import Layout from '../layouts/Layout.astro'
 ---
 
-<Layout title="Fruitbench - Rank Your Favorite Fruits">
+<Layout title='Fruitbench - Rank Your Favorite Fruits'>
   <FruitBench client:load />
+  <Welcome />
 </Layout>

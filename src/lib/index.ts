@@ -6,9 +6,14 @@
 // Fruit database
 export { FRUITS, TAG_METADATA } from '../data/fruits'
 
+// Criterion metadata
+export { CRITERION_METADATA } from '../types'
+
 // Types
 export type {
   AppState,
+  Criterion,
+  CriterionMetadata,
   FilterConfig,
   Fruit,
   FruitRating,
