@@ -15,6 +15,7 @@ Fruitbench is an over-engineered fruit ranking benchmark application where users
 ## Tech Stack
 
 - **Framework**: Astro 5.15 (Static Site Generation with Islands Architecture)
+- **UI Library**: React 19.2 with @astrojs/react integration
 - **Language**: TypeScript (strict mode via `astro/tsconfigs/strict`)
 - **Runtime**: Bun (not Node.js)
 - **CSS**: Tailwind CSS 4.1 with DaisyUI 5.3 components
@@ -57,9 +58,22 @@ The basic flow of the application from the user's perspective should loosely be 
 
 **Project Structure:**
 
-- `/src/pages/` - Astro pages (currently just index.astro)
-- `/src/components/` - Astro components
+- `/src/pages/` - Astro pages (index.astro)
+- `/src/components/` - React and Astro components
+  - `FruitBench.tsx` - Main application component with state management (React, client:load)
+  - `FruitSelector.tsx` - Fruit selection interface with search/filter by tags
+  - `RankingPanel.tsx` - Rating sliders for 4 criteria with individual fruit cards
+  - `ResultsTable.tsx` - Sortable results table with tier system and color coding
+  - `ShareModal.tsx` - Modal for sharing results via link or downloading as JSON
+  - `ThemeToggle.tsx` - Theme switcher component (nord/dim)
 - `/src/layouts/` - Astro layout components (Layout.astro is the base layout)
+- `/src/data/` - Data files
+  - `fruits.ts` - Comprehensive fruit database (~70 fruits with emoji icons and tags)
+- `/src/types.ts` - TypeScript type definitions (Fruit, FruitRating, RatedFruit, AppState, etc.)
+- `/src/utils/` - Utility functions
+  - `fruit-utils.ts` - Filtering, sorting, tier calculation functions
+  - `storage.ts` - LocalStorage persistence utilities
+- `/src/lib/` - Barrel exports for clean imports
 - `/src/global.css` - Global styles using Tailwind CSS 4's new `@import` syntax and `@theme` blocks
 - `/src/assets/` - Static assets
 
@@ -88,20 +102,62 @@ The basic flow of the application from the user's perspective should loosely be 
    - Uses `astro-capo` for optimized head element ordering
    - Import `{ Head }` from `astro-capo`, not `astro:components`
 
-## Planned Features
+6. **React Integration**:
+   - React integration is configured in `astro.config.mjs` via `integrations: [react()]`
+   - React components use the `client:load` directive to hydrate on page load
+   - Main app component (`FruitBench.tsx`) manages all state and syncs with localStorage
 
-The application aims to implement:
+## Implemented Features
 
-1. **Interactive Ranking System**: Users rate fruits on 4 criteria with sliders or similar UI
-2. **Fruit Database**: Predefined list of popular fruits with emoji icons
-3. **Results Table**: Sortable table similar to hardware benchmark sites with:
-   - Columns: Icon, Fruit, Flavor, Nourishment, Reliability, Practicality, Total
-   - Tier system (S, A, B, C, F) indicated via color coding and section separators
-   - S-tier should be visually distinctive and special
-   - Clickable column headers to sort by different criteria
-4. **Sharing**: Export/share results to platforms like Discord (via link or image)
-5. **Data Persistence**: Local storage for saving user rankings
-6. **Mobile-First Design**: Fully responsive with accessibility considerations
+The application includes:
+
+1. **Interactive Ranking System**:
+   - Rate fruits on 4 criteria (Flavor, Nourishment, Reliability, Practicality) using DaisyUI range sliders
+   - Each fruit displays in a card with all 4 sliders and a total score
+   - Quick reset and remove buttons for each fruit
+
+2. **Fruit Database**:
+   - ~70 fruits with emoji icons and tag-based organization
+   - 10 tags: popular, berries, tropical, citrus, stone-fruit, melons, exotic, culinary-vegetable, dried, orchard
+   - Each fruit can have multiple tags for flexible filtering
+
+3. **Fruit Selection Interface**:
+   - Search bar for filtering by name
+   - Tag-based filtering with clickable badges (OR logic - show fruits with any selected tag)
+   - "Select All Filtered" button to quickly add all visible fruits
+   - Visual indicators for selected fruits
+   - Mobile: Drawer overlay on mobile devices
+   - Desktop: Fixed sidebar for easy access
+
+4. **Results Table**:
+   - Sortable columns (click headers to sort by Tier, Flavor, Nourishment, Reliability, Practicality, Total)
+   - Tier system (S, A, B, C, F) with color-coded badges and row backgrounds
+   - S-tier: Warning color (yellow/gold), 90%+ scores
+   - Grouped by tier for easy visual scanning
+   - Legend showing tier percentages
+
+5. **Sharing System**:
+   - Generate shareable URL with Base64-encoded rankings in query params
+   - Copy link to clipboard functionality
+   - Download rankings as JSON file for backup
+   - Stats display (fruits selected, fruits rated)
+
+6. **Data Persistence**:
+   - Auto-save to localStorage on every change
+   - Load state from localStorage on page load
+   - Import rankings from shared URL (overrides localStorage)
+   - Versioned storage format for future migrations
+
+7. **Theme System**:
+   - Toggle between 'nord' (light) and 'dim' (dark) themes
+   - Persistent preference via localStorage
+   - No FART (Flash of inAccurate coloR Theme) using inline script
+
+8. **Mobile-First Design**:
+   - Fully responsive layout with mobile drawer for fruit selection
+   - Desktop: 3-column layout (selector | ranking | results)
+   - Mobile: Stacked layout with hamburger menu for selector
+   - Touch-friendly buttons and sliders
 
 ## Style Guidelines
 

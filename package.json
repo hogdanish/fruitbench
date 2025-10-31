@@ -8,19 +8,24 @@
     "preview": "bunx --bun astro preview",
     "astro": "bunx --bun astro",
     "check": "bunx --bun astro check",
-    "lint": "eslint . --flag unstable_ts_config --fix"
+    "lint": "eslint . --fix"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.5",
+    "@astrojs/react": "^4.4.1",
     "@tailwindcss/typography": "^0.5.19",
     "@tailwindcss/vite": "^4.1.16",
     "astro": "^5.15.3",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
     "tailwindcss": "^4.1.16",
     "theme-change": "^2.5.0",
     "typescript": "^5.9.3"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^6.1.0",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2",
     "astro-capo": "^0.0.1",
     "astro-eslint-parser": "^1.2.2",
     "daisyui": "^5.3.10",

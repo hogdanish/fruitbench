@@ -5,7 +5,12 @@
       "Bash(bun install:*)",
       "Bash(bun run check:*)",
       "Bash(bun run dev)",
-      "Bash(bun run lint)"
+      "Bash(bun run lint)",
+      "Bash(bunx eslint:*)",
+      "mcp__context7__resolve-library-id",
+      "mcp__astro-docs__search_astro_docs",
+      "mcp__context7__get-library-docs",
+      "Bash(bun run build:*)"
     ],
     "deny": [],
     "ask": []
