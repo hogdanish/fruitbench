@@ -1,0 +1,26 @@
+@import "tailwindcss";
+@plugin '@tailwindcss/typography';
+@plugin "daisyui" {
+  themes: nord --default, dim --prefersdark;
+}
+
+@theme {
+  /* font families */
+  --font-sans:
+    Inter, ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
+    'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+@view-transition {
+  navigation: auto;
+}
+
+body {
+  @apply font-sans subpixel-antialiased;
+  @apply flex flex-col;
+  font-family:
+    'Inter',
+    system-ui,
+    -apple-system,
+    sans-serif;
+}
